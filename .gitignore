@@ -1,0 +1,36 @@
+# Environment — NEVER commit these
+.env
+.env.local
+.env.production
+.env.*.local
+server/.env
+server/.env.local
+
+# Dependencies
+node_modules/
+server/node_modules/
+
+# Build output
+dist/
+server/dist/
+build/
+*.tsbuildinfo
+
+# Prisma
+server/prisma/migrations/*.sql.bak
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Test coverage
+coverage/
+server/coverage/

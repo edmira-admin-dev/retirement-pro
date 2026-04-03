@@ -1,0 +1,160 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
+  holdings      Holding[]
+  fireProfile   FireProfile?
+  healthProfile HealthProfile?
+  goals         Goal[]
+  gamification  Gamification?
+  taxProfile    TaxProfile?
+  refreshTokens RefreshToken[]
+
+  @@index([email])
+  @@index([deletedAt])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+}
+
+model Holding {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  assetClass    AssetClass
+  currentValue  Int       // paise
+  investedValue Int       // paise
+  units         Float?
+  nav           Float?
+  notes         String?   @db.Text
+  deletedAt     DateTime?
+  lastUpdated   DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([userId, deletedAt])
+  @@index([assetClass])
+}
+
+model FireProfile {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentAge            Int
+  retirementAge         Int      @default(45)
+  lifeExpectancy        Int      @default(90)
+  currentMonthlyExpense Int      // paise
+  medicalMonthlyExpense Int      // paise
+  lifestyleBuffer       Float    @default(0)
+  expectedReturnPre     Float    @default(12)
+  expectedReturnPost    Float    @default(8)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model HealthProfile {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  monthlyIncome      Int      // paise
+  monthlyExpenses    Int      // paise
+  monthlyEMIs        Int      // paise
+  liquidAssets       Int      // paise
+  totalLiabilities   Int      // paise
+  monthlySavings     Int      // paise
+  hasTermInsurance   Boolean  @default(false)
+  hasHealthInsurance Boolean  @default(false)
+  hasWill            Boolean  @default(false)
+  hasNominations     Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Goal {
+  id                String       @id @default(cuid())
+  userId            String
+  user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name              String
+  category          GoalCategory
+  targetAmount      Int          // paise
+  targetYear        Int
+  currentAllocation Int          // paise
+  inflationRate     Float        @default(6)
+  notes             String?      @db.Text
+  deletedAt         DateTime?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@index([userId])
+  @@index([userId, deletedAt])
+}
+
+model Gamification {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badges          Json     // Badge[]
+  streakDays      Int      @default(0)
+  lastVisitDate   String
+  dismissedNudges Json     @default("[]") // string[]
+  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+
+  @@index([userId])
+}
+
+model TaxProfile {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  realizedGainsFY       Int      @default(0) // paise
+  unrealizedEquityGains Int      @default(0) // paise
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([userId])
+}
+
+enum AssetClass {
+  MF
+  NPS
+  EPF
+  PPF
+  STOCK
+}
+
+enum GoalCategory {
+  FIRE
+  EDUCATION
+  WEDDING
+  PARENTS
+  HOUSING
+  OTHER
+}
