@@ -3,6 +3,9 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { X } from 'lucide-react'
 import { Sidebar } from './Sidebar'
 import { TopBar } from './TopBar'
+import { StreakCounter } from '../gamification/StreakCounter'
+import { NudgeBanner } from '../gamification/NudgeBanner'
+import { useBootstrapGamification } from '../../hooks/useGamification'
 
 const PAGE_TITLES: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -16,18 +19,19 @@ export function AppShell() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const location = useLocation()
   const title = PAGE_TITLES[location.pathname] ?? 'Retirement Pro'
+  useBootstrapGamification()
 
   return (
-    <div className="flex h-screen bg-surface overflow-hidden">
-      {/* Desktop sidebar — icon-only at md, full at lg+ */}
-      <div className="hidden md:flex md:w-16 lg:w-56 shrink-0 flex-col">
+    <div className="flex h-screen bg-theme-bg overflow-hidden">
+      {/* Desktop sidebar */}
+      <div className="hidden md:flex md:w-16 lg:w-60 shrink-0 flex-col">
         <Sidebar collapsed={false} />
       </div>
 
       {/* Mobile drawer overlay */}
       {drawerOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 md:hidden"
+          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm md:hidden"
           onClick={() => setDrawerOpen(false)}
           aria-hidden="true"
         />
@@ -45,7 +49,7 @@ export function AppShell() {
       >
         <div className="relative h-full">
           <button
-            className="absolute top-3 right-3 p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+            className="absolute top-3 right-3 p-1.5 rounded-lg text-theme-muted hover:text-theme-text hover:bg-theme-bg-alt transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary"
             onClick={() => setDrawerOpen(false)}
             aria-label="Close navigation menu"
           >
@@ -59,8 +63,10 @@ export function AppShell() {
       <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
         <TopBar
           title={title}
+          action={<StreakCounter />}
           onMenuClick={() => setDrawerOpen(true)}
         />
+        <NudgeBanner />
         <main className="flex-1 overflow-y-auto">
           <Outlet />
         </main>

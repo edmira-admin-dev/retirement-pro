@@ -17,11 +17,11 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
-  { to: '/portfolio', label: 'Portfolio', icon: <Briefcase size={20} /> },
-  { to: '/calculator', label: 'FIRE Calc', icon: <Calculator size={20} /> },
-  { to: '/health', label: 'Health Score', icon: <Heart size={20} /> },
-  { to: '/goals', label: 'Goals', icon: <Target size={20} /> },
+  { to: '/dashboard', label: 'Dashboard',   icon: <LayoutDashboard size={18} /> },
+  { to: '/portfolio', label: 'Investments', icon: <Briefcase size={18} /> },
+  { to: '/calculator', label: 'FIRE Calc',  icon: <Calculator size={18} /> },
+  { to: '/health',    label: 'Health Score', icon: <Heart size={18} /> },
+  { to: '/goals',     label: 'Goals',        icon: <Target size={18} /> },
 ]
 
 interface SidebarProps {
@@ -34,27 +34,29 @@ export function Sidebar({ collapsed, onClose }: SidebarProps) {
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     [
-      'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors cursor-pointer',
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500',
+      'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all cursor-pointer text-sm',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary',
       isActive
-        ? 'bg-brand-500/15 text-brand-500'
-        : 'text-text-muted hover:bg-surface-card hover:text-text-primary',
+        ? 'bg-theme-primary text-white font-semibold shadow-sm'
+        : 'text-theme-text-sec hover:bg-theme-bg-alt hover:text-theme-text font-medium',
     ].join(' ')
 
   return (
-    <aside className="flex h-full flex-col bg-surface-card border-r border-surface-border">
+    <aside className="flex h-full flex-col bg-theme-card border-r border-theme-border">
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-4 py-5 border-b border-surface-border">
-        <TrendingUp size={22} className="text-brand-500 shrink-0" />
+      <div className="flex items-center gap-2.5 px-4 py-5 border-b border-theme-border">
+        <div className="w-8 h-8 rounded-xl bg-theme-primary flex items-center justify-center shrink-0">
+          <TrendingUp size={16} className="text-white" />
+        </div>
         {!collapsed && (
-          <span className="font-semibold text-text-primary tracking-tight">
-            Retirement Pro
+          <span className="font-bold text-theme-text tracking-tight text-sm">
+            Desi FIRE
           </span>
         )}
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-2.5 py-4 space-y-1 overflow-y-auto">
         {NAV_ITEMS.map((item) => (
           <NavLink
             key={item.to}
@@ -64,26 +66,26 @@ export function Sidebar({ collapsed, onClose }: SidebarProps) {
           >
             <span className="shrink-0">{item.icon}</span>
             {!collapsed && (
-              <span className="text-sm font-medium truncate">{item.label}</span>
+              <span className="truncate">{item.label}</span>
             )}
           </NavLink>
         ))}
       </nav>
 
       {/* User + Logout */}
-      <div className="px-2 py-3 border-t border-surface-border space-y-1">
+      <div className="px-2.5 py-3 border-t border-theme-border space-y-1">
         {!collapsed && user && (
-          <div className="px-3 py-2">
-            <p className="text-xs text-text-muted truncate">{user.email}</p>
+          <div className="px-3 py-2 rounded-xl bg-theme-bg-alt mb-1">
+            <p className="text-xs text-theme-muted truncate">{user.email}</p>
           </div>
         )}
         <button
           onClick={logout}
-          className="flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-text-muted hover:bg-surface-border hover:text-danger transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger"
+          className="flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-theme-muted hover:bg-danger/10 hover:text-danger transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger text-sm font-medium"
           aria-label="Log out"
         >
-          <LogOut size={20} className="shrink-0" />
-          {!collapsed && <span className="text-sm font-medium">Log out</span>}
+          <LogOut size={18} className="shrink-0" />
+          {!collapsed && <span>Log out</span>}
         </button>
       </div>
     </aside>

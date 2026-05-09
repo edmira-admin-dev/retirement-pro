@@ -44,8 +44,8 @@ model Holding {
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   name          String
   assetClass    AssetClass
-  currentValue  Int       // paise
-  investedValue Int       // paise
+  currentValue  BigInt    // paise
+  investedValue BigInt    // paise
   units         Float?
   nav           Float?
   notes         String?   @db.Text
@@ -71,6 +71,15 @@ model FireProfile {
   lifestyleBuffer       Float    @default(0)
   expectedReturnPre     Float    @default(12)
   expectedReturnPost    Float    @default(8)
+  // Extended inputs (Phase 2 enhancement)
+  generalInflation      Float    @default(6)
+  medicalInflation      Float    @default(10)
+  withdrawalRate        Float    @default(3.5)
+  expenseCategories     Json?
+  incomeInputs          Json?
+  assetAllocation       Json?
+  liabilities           Json?
+  npsInputs             Json?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
@@ -148,6 +157,17 @@ enum AssetClass {
   EPF
   PPF
   STOCK
+  BANK
+  LIQUID
+  FD
+  BOND
+  ETF
+  GOLD
+  REAL_ESTATE
+  ANNUITY
+  INTL_EQUITY
+  INTL_DEBT
+  COMMODITY
 }
 
 enum GoalCategory {

@@ -6,7 +6,11 @@ import * as holdingsController from '../controllers/holdings.controller'
 
 const router = Router()
 
-const AssetClassEnum = z.enum(['MF', 'NPS', 'EPF', 'PPF', 'STOCK'])
+const AssetClassEnum = z.enum([
+  'MF', 'NPS', 'EPF', 'PPF', 'STOCK',
+  'BANK', 'LIQUID', 'FD', 'BOND', 'ETF',
+  'GOLD', 'REAL_ESTATE', 'ANNUITY', 'INTL_EQUITY', 'INTL_DEBT',
+])
 
 const CreateHoldingSchema = z.object({
   name: z.string().min(1).max(200),

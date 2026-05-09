@@ -34,17 +34,17 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface flex items-center justify-center px-4">
+    <div className="min-h-screen bg-theme-bg flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
-          <TrendingUp size={28} className="text-brand-500" />
-          <span className="text-xl font-semibold text-text-primary">Retirement Pro</span>
+          <TrendingUp size={28} className="text-theme-primary" />
+          <span className="text-xl font-semibold text-theme-text">Retirement Pro</span>
         </div>
 
-        <div className="bg-surface-card border border-surface-border rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-text-primary mb-1">Create account</h2>
-          <p className="text-sm text-text-muted mb-6">Start your FIRE journey today</p>
+        <div className="bg-theme-card border border-theme-border rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-theme-text mb-1">Create account</h2>
+          <p className="text-sm text-theme-muted mb-6">Start your FIRE journey today</p>
 
           {error && (
             <div className="mb-4 px-3 py-2.5 rounded-lg bg-danger/10 border border-danger/20 text-danger text-sm">
@@ -54,7 +54,7 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-text-primary mb-1.5">
+              <label htmlFor="email" className="block text-sm font-medium text-theme-text mb-1.5">
                 Email
               </label>
               <input
@@ -64,13 +64,13 @@ export default function RegisterPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg bg-surface border border-surface-border text-text-primary placeholder:text-text-muted text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors"
+                className="w-full px-3 py-2.5 rounded-lg bg-theme-bg-alt border border-theme-border text-theme-text placeholder:text-theme-muted text-sm focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent transition-colors"
                 placeholder="you@example.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-text-primary mb-1.5">
+              <label htmlFor="password" className="block text-sm font-medium text-theme-text mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -82,13 +82,13 @@ export default function RegisterPage() {
                   minLength={8}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2.5 pr-10 rounded-lg bg-surface border border-surface-border text-text-primary placeholder:text-text-muted text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors"
+                  className="w-full px-3 py-2.5 pr-10 rounded-lg bg-theme-bg-alt border border-theme-border text-theme-text placeholder:text-theme-muted text-sm focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent transition-colors"
                   placeholder="Min. 8 characters"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute inset-y-0 right-0 flex items-center px-3 text-text-muted hover:text-text-primary transition-colors cursor-pointer"
+                  className="absolute inset-y-0 right-0 flex items-center px-3 text-theme-muted hover:text-theme-text transition-colors cursor-pointer"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -99,15 +99,15 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 rounded-lg bg-brand-500 hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-card"
+              className="w-full py-2.5 rounded-lg bg-theme-primary hover:bg-theme-primary-dark disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white"
             >
               {loading ? 'Creating account…' : 'Create account'}
             </button>
           </form>
 
-          <p className="mt-4 text-center text-sm text-text-muted">
+          <p className="mt-4 text-center text-sm text-theme-muted">
             Already have an account?{' '}
-            <Link to="/login" className="text-brand-500 hover:text-brand-700 font-medium transition-colors">
+            <Link to="/login" className="text-theme-primary hover:text-theme-primary-dark font-medium transition-colors">
               Sign in
             </Link>
           </p>

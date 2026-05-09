@@ -1,10 +1,11 @@
 import { Suspense, lazy } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppShell } from './components/layout/AppShell'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { useBootstrap } from './hooks/useBootstrap'
 
+const LandingPage = lazy(() => import('./pages/LandingPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
@@ -28,8 +29,8 @@ function AppRoutes() {
 
   if (!ready) {
     return (
-      <div className="min-h-screen bg-surface flex items-center justify-center">
-        <div className="w-6 h-6 rounded-full border-2 border-brand-500 border-t-transparent animate-spin" />
+      <div className="min-h-screen bg-theme-bg flex items-center justify-center">
+        <div className="w-6 h-6 rounded-full border-2 border-theme-primary border-t-transparent animate-spin" />
       </div>
     )
   }
@@ -37,13 +38,14 @@ function AppRoutes() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-surface flex items-center justify-center">
-          <div className="w-6 h-6 rounded-full border-2 border-brand-500 border-t-transparent animate-spin" />
+        <div className="min-h-screen bg-theme-bg flex items-center justify-center">
+          <div className="w-6 h-6 rounded-full border-2 border-theme-primary border-t-transparent animate-spin" />
         </div>
       }
     >
       <Routes>
         {/* Public */}
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
@@ -55,7 +57,6 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         >
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
           <Route path="/calculator" element={<CalculatorPage />} />

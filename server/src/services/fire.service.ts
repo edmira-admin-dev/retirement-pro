@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import { prisma } from '../config/prisma'
 
 export interface FireProfileInput {
@@ -9,6 +10,15 @@ export interface FireProfileInput {
   lifestyleBuffer?: number
   expectedReturnPre?: number
   expectedReturnPost?: number
+  // Extended
+  generalInflation?: number
+  medicalInflation?: number
+  withdrawalRate?: number
+  expenseCategories?: Prisma.InputJsonValue
+  incomeInputs?: Prisma.InputJsonValue
+  assetAllocation?: Prisma.InputJsonValue
+  liabilities?: Prisma.InputJsonValue
+  npsInputs?: Prisma.InputJsonValue
 }
 
 export async function get(userId: string) {

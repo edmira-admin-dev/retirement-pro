@@ -1,28 +1,88 @@
+/* retirement-pro/src/index.css — updated to match design system. Default theme is BLUE. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Default theme vars (BLUE) — overridden at runtime by ThemeContext */
+    --theme-bg: #f5f9fc;
+    --theme-bg-alt: #e3f2fd;
+    --theme-card: #ffffff;
+    --theme-card-alt: #ebf5fb;
+    --theme-primary: #1e88e5;
+    --theme-primary-dark: #1565c0;
+    --theme-primary-light: #42a5f5;
+    --theme-accent: #00acc1;
+    --theme-accent-light: #4dd0e1;
+    --theme-text: #0d47a1;
+    --theme-text-sec: #1565c0;
+    --theme-muted: #90a4ae;
+    --theme-border: #b3d4f0;
+    --theme-success: #26a69a;
+    --theme-warning: #ffa726;
+    --gradient-primary: linear-gradient(135deg, #1e88e5 0%, #42a5f5 100%);
+
+    /* Spacing / radii / shadows — match the design system */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-2xl: 24px;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+    --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.1);
+    --shadow-2xl: 0 24px 60px rgba(15, 23, 42, 0.12);
+  }
+
   html {
-    color-scheme: dark;
+    color-scheme: light;
   }
-
   body {
-    @apply bg-surface text-text-primary font-sans antialiased;
+    @apply bg-theme-bg text-theme-text font-sans antialiased;
   }
-
-  * {
-    @apply border-surface-border;
-  }
-
   :focus-visible {
-    @apply outline-none ring-2 ring-brand-500;
+    @apply outline-none ring-2 ring-theme-primary;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    background: var(--gradient-primary);
+    @apply inline-flex items-center gap-2 text-white font-semibold px-5 py-2.5 rounded-lg shadow-lg transition;
+  }
+  .btn-primary:hover {
+    opacity: 0.92;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold border-2 transition;
+    color: var(--theme-primary);
+    border-color: var(--theme-primary);
+    background: transparent;
+  }
+  .btn-secondary:hover {
+    background: var(--theme-bg-alt);
+  }
+  .card {
+    @apply bg-white p-6 rounded-xl border;
+    border-color: #f3f4f6;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-hero {
+    background: var(--gradient-primary);
+    @apply text-white p-6 rounded-xl;
+    box-shadow: var(--shadow-lg);
   }
 }
 
 @layer utilities {
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: theme('colors.surface.border') transparent;
+    scrollbar-color: var(--theme-border) transparent;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
   }
 }
