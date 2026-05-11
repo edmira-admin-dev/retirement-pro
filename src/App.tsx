@@ -1,9 +1,10 @@
 import { Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { AppShell } from './components/layout/AppShell'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { useBootstrap } from './hooks/useBootstrap'
+import { queryClient } from './lib/queryClient'
 
 const LandingPage = lazy(() => import('./pages/LandingPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
@@ -13,16 +14,13 @@ const PortfolioPage = lazy(() => import('./pages/PortfolioPage'))
 const CalculatorPage = lazy(() => import('./pages/CalculatorPage'))
 const HealthPage = lazy(() => import('./pages/HealthPage'))
 const GoalsPage = lazy(() => import('./pages/GoalsPage'))
+const IncomePage = lazy(() => import('./pages/IncomePage'))
+const ExpensePage = lazy(() => import('./pages/ExpensePage'))
+const TradingJournalPage = lazy(() => import('./pages/TradingJournalPage'))
+const BrokerHubPage = lazy(() => import('./pages/BrokerHubPage'))
+const KiteConnectPage = lazy(() => import('./pages/KiteConnectPage'))
+const GrowwConnectPage = lazy(() => import('./pages/GrowwConnectPage'))
 const NotFound = lazy(() => import('./pages/NotFound'))
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000,
-      retry: 1,
-    },
-  },
-})
 
 function AppRoutes() {
   const ready = useBootstrap()
@@ -62,6 +60,12 @@ function AppRoutes() {
           <Route path="/calculator" element={<CalculatorPage />} />
           <Route path="/health" element={<HealthPage />} />
           <Route path="/goals" element={<GoalsPage />} />
+          <Route path="/income" element={<IncomePage />} />
+          <Route path="/expenses" element={<ExpensePage />} />
+          <Route path="/trading" element={<TradingJournalPage />} />
+          <Route path="/trading/brokers" element={<BrokerHubPage />} />
+          <Route path="/trading/kite" element={<KiteConnectPage />} />
+          <Route path="/trading/groww" element={<GrowwConnectPage />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

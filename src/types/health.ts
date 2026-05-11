@@ -33,3 +33,9 @@ export interface HealthResult {
   ratios: RatioItem[]
   recommendations: string[]
 }
+
+export interface HealthScoreEntry {
+  id: string
+  score: number
+  snapshotDate: string // YYYY-MM-DD
+}

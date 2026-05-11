@@ -8,19 +8,27 @@ generator client {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  email         String         @unique
-  passwordHash  String
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  deletedAt     DateTime?
-  holdings      Holding[]
-  fireProfile   FireProfile?
-  healthProfile HealthProfile?
-  goals         Goal[]
-  gamification  Gamification?
-  taxProfile    TaxProfile?
-  refreshTokens RefreshToken[]
+  id                 String               @id @default(cuid())
+  email              String               @unique
+  passwordHash       String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  deletedAt          DateTime?
+  holdings           Holding[]
+  fireProfile        FireProfile?
+  healthProfile      HealthProfile?
+  healthScoreHistory HealthScoreHistory[]
+  goals              Goal[]
+  gamification       Gamification?
+  taxProfile         TaxProfile?
+  refreshTokens      RefreshToken[]
+  netWorthSnapshots  NetWorthSnapshot[]
+  incomeRecords      IncomeRecord[]
+  expenseRecords     ExpenseRecord[]
+  preferences        UserPreferences?
+  trades             Trade[]
+  positionLtps       PositionLtp[]
+  brokerConnections  BrokerConnection[]
 
   @@index([email])
   @@index([deletedAt])
@@ -151,6 +159,70 @@ model TaxProfile {
   @@index([userId])
 }
 
+model NetWorthSnapshot {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  valueInPaise BigInt
+  snapshotDate String   // YYYY-MM-DD
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, snapshotDate])
+  @@index([userId])
+}
+
+model HealthScoreHistory {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  score        Int
+  snapshotDate String   // YYYY-MM-DD
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, snapshotDate])
+  @@index([userId])
+}
+
+model IncomeRecord {
+  id          String            @id @default(cuid())
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source      String
+  amountPaise Int
+  category    IncomeCategory
+  date        String            // YYYY-MM-DD
+  recurring   Boolean           @default(false)
+  frequency   RecurringFrequency @default(ONE_TIME)
+  notes       String?           @db.Text
+  deletedAt   DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([userId, deletedAt])
+  @@index([userId, date])
+  @@index([category])
+}
+
+enum IncomeCategory {
+  SALARY
+  FREELANCE
+  RENTAL
+  DIVIDEND
+  BUSINESS
+  INTEREST
+  OTHER
+}
+
+enum RecurringFrequency {
+  MONTHLY
+  QUARTERLY
+  ANNUAL
+  ONE_TIME
+}
+
 enum AssetClass {
   MF
   NPS
@@ -177,4 +249,165 @@ enum GoalCategory {
   PARENTS
   HOUSING
   OTHER
+}
+
+model ExpenseRecord {
+  id           String          @id @default(cuid())
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  merchant     String
+  amountPaise  Int
+  expenseType  ExpenseType
+  category     ExpenseCategory
+  date         String          // YYYY-MM-DD
+  recurring    Boolean         @default(false)
+  notes        String?         @db.Text
+  importedFrom ImportSource?
+  deletedAt    DateTime?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([userId, deletedAt])
+  @@index([userId, date])
+  @@index([expenseType])
+  @@index([category])
+}
+
+enum ExpenseType {
+  FIXED
+  DISCRETIONARY
+  LOAN
+}
+
+enum ExpenseCategory {
+  // Fixed
+  RENT
+  ELECTRICITY
+  WATER
+  GAS
+  INTERNET
+  GROCERY
+  COOK
+  DRIVER
+  MAID
+  INSURANCE
+  SUBSCRIPTIONS
+  FIXED_OTHER
+  // Discretionary
+  FOOD
+  TRANSPORT
+  HEALTHCARE
+  ENTERTAINMENT
+  SHOPPING
+  EDUCATION
+  TRAVEL
+  INVESTMENT
+  DISC_OTHER
+  // Loan
+  HOME_LOAN_EMI
+  CAR_LOAN_EMI
+  PERSONAL_LOAN_EMI
+  EDUCATION_LOAN_EMI
+  CREDIT_CARD_EMI
+  LOAN_OTHER
+}
+
+enum ImportSource {
+  MANUAL
+  CSV
+}
+
+model UserPreferences {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expenseViewMonth String?  // YYYY-MM
+  incomeViewMonth  String?  // YYYY-MM
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Trade {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  symbol         String
+  exchange       Exchange
+  segment        Segment
+  tradeType      TradeType
+  quantity       Int
+  pricePaise     Int
+  date           String       // YYYY-MM-DD
+  brokeragePaise Int          @default(0)
+  notes          String?      @db.Text
+  broker         String?      // KITE | GROWW | ANGELONE | HDFC_SKY | null
+  importedFrom   TradeSource  @default(MANUAL)
+  deletedAt      DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([userId])
+  @@index([userId, deletedAt])
+  @@index([userId, symbol])
+  @@index([userId, date])
+  @@index([segment])
+}
+
+model PositionLtp {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  symbol    String
+  ltpPaise  Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, symbol])
+  @@index([userId])
+}
+
+enum Exchange {
+  NSE
+  BSE
+}
+
+enum Segment {
+  EQ
+  FO
+  CDS
+  MF
+}
+
+enum TradeType {
+  BUY
+  SELL
+}
+
+enum TradeSource {
+  MANUAL
+  KITE
+  GROWW
+}
+
+model BrokerConnection {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  broker            String    // KITE | GROWW | ANGELONE | HDFC_SKY
+  connectionType    String    // API | CSV
+  status            String    @default("DISCONNECTED")
+  credentialsJson   String?   @db.Text
+  lastSyncedAt      DateTime?
+  errorMessage      String?
+  tradesSynced      Int       @default(0)
+  duplicatesSkipped Int       @default(0)
+  deletedAt         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([userId, broker])
+  @@index([userId])
+  @@index([userId, deletedAt])
 }

@@ -6,6 +6,12 @@ import healthRoutes from './health'
 import goalsRoutes from './goals'
 import gamificationRoutes from './gamification'
 import taxRoutes from './tax'
+import networthRoutes from './networth'
+import incomeRoutes from './income'
+import expenseRoutes from './expense'
+import preferencesRoutes from './preferences'
+import tradeRoutes from './trade'
+import brokerRoutes from './broker'
 
 const router = Router()
 
@@ -20,5 +26,11 @@ router.use('/health-profile', healthRoutes)
 router.use('/goals', goalsRoutes)
 router.use('/gamification', gamificationRoutes)
 router.use('/tax', taxRoutes)
+router.use('/networth', networthRoutes)
+router.use('/income', incomeRoutes)
+router.use('/expenses', expenseRoutes)
+router.use('/preferences', preferencesRoutes)
+router.use('/trades', tradeRoutes)
+router.use('/integrations', brokerRoutes)
 
 export default router

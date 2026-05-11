@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { AuthUser, AuthStore } from '../types'
+import { queryClient } from '../lib/queryClient'
 
 interface AuthStoreState extends AuthStore {
   refreshToken: string | null
@@ -21,6 +22,7 @@ export const useAuthStore = create<AuthStoreState>((set) => ({
   logout: () => {
     sessionStorage.removeItem('accessToken')
     sessionStorage.removeItem('refreshToken')
+    queryClient.clear()
     set({ user: null, accessToken: null, refreshToken: null })
   },
 }))

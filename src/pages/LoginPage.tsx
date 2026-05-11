@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { TrendingUp, Eye, EyeOff } from 'lucide-react'
 import api from '../lib/api'
 import { useAuthStore } from '../stores/authStore'
+import { queryClient } from '../lib/queryClient'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -20,6 +21,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const { data } = await api.post('/auth/login', { email, password })
+      queryClient.clear()
       setAuth(data.data.user, data.data.accessToken, data.data.refreshToken)
       navigate('/dashboard', { replace: true })
     } catch (err: unknown) {

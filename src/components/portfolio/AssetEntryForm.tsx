@@ -113,7 +113,7 @@ export function AssetEntryForm() {
       const payload: HoldingInput = isSimple
         ? {
             ...form,
-            investedValue: form.currentValue,
+            investedValue: form.investedValue > 0 ? form.investedValue : form.currentValue,
             notes: packRateNotes(rateOfReturn, editing?.notes),
           }
         : form
@@ -209,14 +209,23 @@ export function AssetEntryForm() {
           </div>
 
           {isSimpleForm ? (
-            <div className="grid grid-cols-2 gap-3">
-              <MoneyInput
-                id="ac-current"
-                label="Current Balance"
-                required
-                value={String(form.currentValue || '')}
-                onChange={(v) => set('currentValue', parseFloat(v) || 0)}
-              />
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <MoneyInput
+                  id="ac-current"
+                  label="Current Value"
+                  required
+                  value={String(form.currentValue || '')}
+                  onChange={(v) => set('currentValue', parseFloat(v) || 0)}
+                />
+                <MoneyInput
+                  id="ac-invested"
+                  label="Invested Amount"
+                  optional
+                  value={String(form.investedValue || '')}
+                  onChange={(v) => set('investedValue', parseFloat(v) || 0)}
+                />
+              </div>
               <div>
                 <label htmlFor="ac-rate" className="block text-xs font-medium text-theme-text mb-1">
                   Annual Return %
@@ -232,9 +241,8 @@ export function AssetEntryForm() {
                   placeholder={DEFAULT_RATES[form.assetClass] ?? '8'}
                   className="w-full px-3 py-2 rounded-lg bg-theme-card border border-theme-border text-theme-text text-sm focus:outline-none focus:ring-2 focus:ring-theme-primary transition-colors"
                 />
-                <p className="min-h-[16px] mt-1" />
               </div>
-            </div>
+            </>
           ) : (
             <>
               <div className="grid grid-cols-2 gap-3">

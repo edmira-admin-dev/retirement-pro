@@ -5,6 +5,7 @@ import { PillarGrid } from '../components/health/PillarGrid'
 import { RatioTable } from '../components/health/RatioTable'
 import { RecommendationList } from '../components/health/RecommendationList'
 import { HealthInputForm } from '../components/health/HealthInputForm'
+import { HealthScoreHistory } from '../components/health/HealthScoreHistory'
 import { useHealthProfile } from '../hooks/useHealthProfile'
 import { useHoldings } from '../hooks/useHoldings'
 import { computeHealthResult } from '../utils/healthCalc'
@@ -23,11 +24,17 @@ const DEFAULT_INPUTS: HealthInputs = {
   hasNominations: false,
 }
 
+const LIQUID_CLASSES = new Set<string>(['BANK', 'LIQUID', 'FD'])
+
 export default function HealthPage() {
   const { data: savedProfile, isLoading } = useHealthProfile()
   const { data: holdings } = useHoldings()
 
   const totalAssets = holdings?.reduce((sum, h) => sum + h.currentValue, 0) ?? 0
+  const derivedLiquidAssets = holdings?.reduce(
+    (sum, h) => LIQUID_CLASSES.has(h.assetClass) ? sum + h.currentValue : sum,
+    0
+  ) ?? 0
 
   const [inputs, setInputs] = useState<HealthInputs>(DEFAULT_INPUTS)
 
@@ -35,7 +42,8 @@ export default function HealthPage() {
     if (savedProfile) setInputs(savedProfile)
   }, [savedProfile])
 
-  const result = computeHealthResult(inputs, totalAssets)
+  const effectiveInputs: HealthInputs = { ...inputs, liquidAssets: derivedLiquidAssets }
+  const result = computeHealthResult(effectiveInputs, totalAssets)
 
   if (isLoading) {
     return (
@@ -50,19 +58,13 @@ export default function HealthPage() {
   return (
     <PageWrapper>
       <div className="flex flex-col gap-6">
-        <div>
-          <h1 className="text-xl font-bold text-theme-text">Financial Health Score</h1>
-          <p className="text-sm text-theme-muted mt-1">
-            A 6-pillar diagnostic of your financial wellness — updates as you type.
-          </p>
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left col — inputs */}
           <div className="lg:col-span-1">
             <HealthInputForm
-              inputs={inputs}
+              inputs={effectiveInputs}
               totalAssets={totalAssets}
+              score={result.overallScore}
               onChange={setInputs}
             />
           </div>
@@ -73,6 +75,7 @@ export default function HealthPage() {
               <HealthScoreGauge result={result} />
               <RecommendationList recommendations={result.recommendations} />
             </div>
+            <HealthScoreHistory />
             <PillarGrid pillars={result.pillars} />
             <RatioTable ratios={result.ratios} />
           </div>

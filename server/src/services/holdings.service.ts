@@ -1,6 +1,7 @@
 import { AssetClass, Holding } from '@prisma/client'
 import { prisma } from '../config/prisma'
 import { AppError } from '../middleware/errorHandler'
+import { upsertSnapshot } from './networth.service'
 
 export interface HoldingInput {
   name: string
@@ -41,6 +42,7 @@ export async function create(userId: string, data: HoldingInput) {
       investedValue: BigInt(investedValue),
     },
   })
+  await upsertSnapshot(userId)
   return toSerialized(holding)
 }
 
@@ -60,6 +62,7 @@ export async function update(userId: string, id: string, data: Partial<HoldingIn
       ...(investedValue !== undefined && { investedValue: BigInt(investedValue) }),
     },
   })
+  await upsertSnapshot(userId)
   return toSerialized(updated)
 }
 
@@ -73,4 +76,5 @@ export async function remove(userId: string, id: string) {
     where: { id },
     data: { deletedAt: new Date() },
   })
+  await upsertSnapshot(userId)
 }

@@ -4,6 +4,7 @@ import { useHoldings } from '../hooks/useHoldings'
 import { useFireProfile } from '../hooks/useFireProfile'
 import { useHealthProfile } from '../hooks/useHealthProfile'
 import { useGamification } from '../hooks/useGamification'
+import { useNetWorthHistory } from '../hooks/useNetWorthHistory'
 import { computeFireResult } from '../utils/fireCalc'
 import { computeHealthResult } from '../utils/healthCalc'
 import { useAuthStore } from '../stores/authStore'
@@ -13,6 +14,7 @@ import { FireProgressCard } from '../components/dashboard/FireProgressCard'
 import { PillarMiniGrid } from '../components/dashboard/PillarMiniGrid'
 import { FeatureNavGrid } from '../components/dashboard/FeatureNavGrid'
 import { BadgeSummary } from '../components/dashboard/BadgeSummary'
+import { NetWorthChart } from '../components/dashboard/NetWorthChart'
 
 export default function DashboardPage() {
   const user = useAuthStore((s) => s.user)
@@ -20,6 +22,7 @@ export default function DashboardPage() {
   const { data: fireProfile } = useFireProfile()
   const { data: healthProfile } = useHealthProfile()
   const { data: gamData } = useGamification()
+  const { data: networthHistory = [] } = useNetWorthHistory()
 
   const netWorth = useMemo(
     () => holdings.reduce((sum, h) => sum + h.currentValue, 0),
@@ -61,6 +64,9 @@ export default function DashboardPage() {
 
         {/* Health Pillars — only when data available */}
         {healthResult && <PillarMiniGrid pillars={healthResult.pillars} />}
+
+        {/* Net Worth Timeline */}
+        <NetWorthChart data={networthHistory} />
 
         {/* Feature navigation */}
         <FeatureNavGrid />

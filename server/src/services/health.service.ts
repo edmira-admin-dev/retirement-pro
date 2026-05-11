@@ -24,3 +24,19 @@ export async function upsert(userId: string, data: HealthProfileInput) {
     update: { ...data },
   })
 }
+
+export async function upsertScoreHistory(userId: string, score: number) {
+  const snapshotDate = new Date().toISOString().split('T')[0]
+  return prisma.healthScoreHistory.upsert({
+    where: { userId_snapshotDate: { userId, snapshotDate } },
+    create: { userId, score, snapshotDate },
+    update: { score },
+  })
+}
+
+export async function getScoreHistory(userId: string) {
+  return prisma.healthScoreHistory.findMany({
+    where: { userId },
+    orderBy: { snapshotDate: 'asc' },
+  })
+}

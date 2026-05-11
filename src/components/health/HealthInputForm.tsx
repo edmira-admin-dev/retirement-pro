@@ -1,12 +1,13 @@
 import { useRef } from 'react'
 import { Lock } from 'lucide-react'
-import { useSaveHealthProfile } from '../../hooks/useHealthProfile'
+import { useSaveHealthProfile, useSaveHealthScore } from '../../hooks/useHealthProfile'
 import { formatRupeesCompact, rupeesToWords } from '../../utils/money'
 import type { HealthInputs } from '../../types/health'
 
 interface HealthInputFormProps {
   inputs: HealthInputs
   totalAssets: number
+  score: number
   onChange: (inputs: HealthInputs) => void
 }
 
@@ -69,22 +70,28 @@ function CheckboxField({ label, checked, onChange, onBlur }: CheckboxFieldProps)
   )
 }
 
-export const HealthInputForm = ({ inputs, totalAssets, onChange }: HealthInputFormProps) => {
-  const { mutate: save } = useSaveHealthProfile()
+export const HealthInputForm = ({ inputs, totalAssets, score, onChange }: HealthInputFormProps) => {
+  const { mutate: saveProfile } = useSaveHealthProfile()
+  const { mutate: saveScore } = useSaveHealthScore()
   const saveTimer = useRef<ReturnType<typeof setTimeout>>()
   const latestRef = useRef(inputs)
   latestRef.current = inputs
+  const scoreRef = useRef(score)
+  scoreRef.current = score
 
   const handleChange = (field: keyof HealthInputs, value: number | boolean) => {
     const updated = { ...inputs, [field]: value }
+    latestRef.current = updated
     onChange(updated)
     clearTimeout(saveTimer.current)
-    saveTimer.current = setTimeout(() => save(updated), 800)
+    saveTimer.current = setTimeout(() => {
+      saveProfile(updated, { onSuccess: () => saveScore(scoreRef.current) })
+    }, 800)
   }
 
   const handleBlur = () => {
     clearTimeout(saveTimer.current)
-    save(latestRef.current)
+    saveProfile(latestRef.current, { onSuccess: () => saveScore(scoreRef.current) })
   }
 
   return (
@@ -115,8 +122,12 @@ export const HealthInputForm = ({ inputs, totalAssets, onChange }: HealthInputFo
           readOnly
           hint={`Auto-derived: ${formatRupeesCompact(totalAssets)}`}
         />
-        <RupeeField label="Liquid Assets (savings, FD, liquid funds)" value={inputs.liquidAssets}
-          onChange={(v) => handleChange('liquidAssets', v)} onBlur={handleBlur} />
+        <RupeeField
+          label="Liquid Assets (auto-derived)"
+          value={inputs.liquidAssets}
+          readOnly
+          hint="From BANK, FD & Liquid fund holdings in Portfolio"
+        />
         <RupeeField label="Total Liabilities (loans, credit card)" value={inputs.totalLiabilities}
           onChange={(v) => handleChange('totalLiabilities', v)} onBlur={handleBlur} />
       </div>

@@ -7,6 +7,10 @@ import {
   Target,
   LogOut,
   TrendingUp,
+  Wallet,
+  Receipt,
+  BookMarked,
+  Layers,
 } from 'lucide-react'
 import { useAuthStore } from '../../stores/authStore'
 
@@ -22,6 +26,10 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/calculator', label: 'FIRE Calc',  icon: <Calculator size={18} /> },
   { to: '/health',    label: 'Health Score', icon: <Heart size={18} /> },
   { to: '/goals',     label: 'Goals',        icon: <Target size={18} /> },
+  { to: '/income',   label: 'Income',       icon: <Wallet size={18} /> },
+  { to: '/expenses', label: 'Expenses',     icon: <Receipt size={18} /> },
+  { to: '/trading',         label: 'Portfolio',   icon: <BookMarked size={18} /> },
+  { to: '/trading/brokers', label: 'Brokers',     icon: <Layers size={18} /> },
 ]
 
 interface SidebarProps {

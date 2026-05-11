@@ -12,3 +12,14 @@ export const upsert = asyncHandler(async (req: AuthRequest, res: Response) => {
   const profile = await healthService.upsert(req.user!.userId, req.body)
   res.json({ data: profile })
 })
+
+export const getScoreHistory = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const history = await healthService.getScoreHistory(req.user!.userId)
+  res.json({ data: history })
+})
+
+export const saveScoreHistory = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const { score } = req.body as { score: number }
+  const entry = await healthService.upsertScoreHistory(req.user!.userId, score)
+  res.json({ data: entry })
+})

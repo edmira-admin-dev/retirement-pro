@@ -26,6 +26,10 @@
 | 05 | Goal Tracker (FIRE + milestones) | [x] done | [ ] |
 | 06 | Gamification (badges + streaks) | [x] done | [x] |
 | 07 | Tax Alerts (LTCG + 3-bucket) | [x] done | [ ] |
+| 08 | Income Tracker | [~] in-progress | [ ] |
+| 09 | Expense Tracker (Fixed/Discretionary/Loan) | [~] in-progress | [ ] |
+| 14 | Trading Journal (Trades CRUD + FIFO P&L) | [~] in-progress | [ ] |
+| 15 | Broker Integration Hub | [~] in-progress | [ ] |
 
 Status: `[ ] todo` | `[~] in-progress` | `[x] done` | `[!] blocked`
 Verified: `[ ]` = not confirmed | `[x]` = Tier 1 (build) + Tier 2 (human) both passed
@@ -34,7 +38,27 @@ Verified: `[ ]` = not confirmed | `[x]` = Tier 1 (build) + Tier 2 (human) both p
 
 ## In-Progress Detail
 
-No spec currently in-progress.
+### 08 — Income Tracker (BE + FE done)
+
+**BE:**
+- `server/prisma/schema.prisma` — `IncomeRecord` model, `IncomeCategory` + `RecurringFrequency` enums
+- `server/src/services/income.service.ts` — list (month/category filter), create, update, remove, summary
+- `server/src/controllers/income.controller.ts` — list, create, update, remove, getSummary
+- `server/src/routes/income.ts` — 5 routes with Zod validation
+- `server/src/routes/index.ts` — mounted `/income` router
+- `npx prisma generate` ✓ | `npm run build` (server) ✓
+- **Pending:** `npm run db:push` to Hostinger MySQL
+
+**FE:**
+- `src/types/income.ts` — IncomeRecord, IncomeCategory, RecurringFrequency, IncomeSummary
+- `src/hooks/useIncome.ts` — useIncome, useIncomeSummary, useAddIncome, useUpdateIncome, useDeleteIncome; invalidates `income`/`networth`/`cashflow` on mutation
+- `src/components/income/IncomeStats.tsx` — monthly total, YTD, primary source %, MoM change
+- `src/components/income/IncomeForm.tsx` — add/edit modal with MoneyInput + recurring toggle
+- `src/components/income/IncomeList.tsx` — sortable table (date/amount), category badges, inline delete confirm, mobile card layout
+- `src/pages/IncomePage.tsx` — month nav, category filter pills, full page composition
+- `src/App.tsx` — `/income` lazy route
+- `src/components/layout/Sidebar.tsx` — Income nav item (Wallet icon)
+- `npm run build` (frontend) — zero TS errors ✓ (8.97s)
 
 ---
 
@@ -161,6 +185,52 @@ No spec currently in-progress.
 
 [Newest entry first]
 
+### 2026-05-10 — /fe @specs/15-broker-hub.md
+
+- `src/types/broker.ts` — BrokerSlug, ConnectionType, ConnectionStatus, BrokerConnection, BrokerMeta types + BROKER_META config array
+- `src/hooks/useBrokerConnections.ts` — useBrokerConnectionsQuery (GET /integrations), useDisconnectBrokerMutation (DELETE /integrations/:broker)
+- `src/components/broker/BrokerStatusBadge.tsx` — CONNECTED (green) / DISCONNECTED (gray) / ERROR (red) badge with pulsing dot
+- `src/components/broker/BrokerCard.tsx` — colored initial logo, status badge, last synced relative time, sync summary, Connect/Sync/Disconnect action buttons
+- `src/pages/BrokerHubPage.tsx` — 4-card grid (2-col), stats bar, loading skeleton, error state; disconnect confirms via window.confirm
+- `src/App.tsx` — added `/trading/brokers` lazy route
+- `src/components/layout/Sidebar.tsx` — added Brokers nav item (Layers icon)
+- `npm run build` — zero TS errors ✓ (11.76s)
+
+### 2026-05-10 — /be @specs/15-broker-hub.md
+
+- `server/prisma/schema.prisma` — `BrokerConnection` model; `broker String?` added to `Trade` model; `brokerConnections` relation on User
+- `server/src/services/broker.service.ts` — list (returns all 4 brokers, defaults missing rows to DISCONNECTED), disconnect (clears credentialsJson, sets DISCONNECTED)
+- `server/src/controllers/broker.controller.ts` — list, disconnect handlers with Zod broker slug validation
+- `server/src/routes/broker.ts` — GET `/`, DELETE `/:broker`, both auth-protected
+- `server/src/routes/index.ts` — mounted `/integrations`
+- `npx prisma generate` — blocked by dev server DLL lock; run after stopping server
+- `npm run build` (server) — zero TS errors ✓
+- **Action needed:** stop dev server → `npx prisma generate` → `npm run db:push` → restart
+
+### 2026-05-10 — /fe @specs/14-trading-journal.md
+
+- `src/types/trade.ts` — Trade, Position, PnLSummary, TradeFilters, TradePayload types
+- `src/hooks/useTrades.ts` — useTrades, usePositions, usePnLSummary, useAddTrade, useUpdateTrade, useDeleteTrade, useUpdateLtp
+- `src/components/trading/LtpCell.tsx` — inline LTP editor (click pencil → input → save on blur/Enter)
+- `src/components/trading/PositionsTable.tsx` — open positions with FIFO avg buy, inline LTP, unrealized P&L coloring
+- `src/components/trading/TradeHistoryTable.tsx` — sortable trade list with symbol/segment filter pills, inline delete confirm
+- `src/components/trading/PnLSummaryCards.tsx` — 3 stat cards (realized, unrealized, brokerage) + FY date range filter
+- `src/components/trading/TradeForm.tsx` — add/edit modal (all spec fields, BUY/SELL toggle, paise↔₹ conversion)
+- `src/pages/TradingJournalPage.tsx` — tabbed layout: Open Positions | Trade History | P&L Summary
+- `src/App.tsx` — added `/trading` lazy route
+- `src/components/layout/Sidebar.tsx` — Trading nav item (BookMarked icon)
+- `npm run build` — zero TS errors ✓ (13.30s)
+
+### 2026-05-10 — /be @specs/14-trading-journal.md
+
+- `server/prisma/schema.prisma` — `Trade` model, `PositionLtp` model, `Exchange`/`Segment`/`TradeType`/`TradeSource` enums; `trades` + `positionLtps` relations on User
+- `server/src/services/trade.service.ts` — list (symbol/segment/date filter), createSingle, createBatch, update, soft-delete, positions (FIFO), pnlSummary (realized/unrealized/brokerage), updateLtp (upsert)
+- `server/src/controllers/trade.controller.ts` — 7 handlers; Zod validation for body/query/params
+- `server/src/routes/trade.ts` — `/positions`, `/pnl`, `/positions/:symbol/ltp` before `/:id`; all routes auth-protected
+- `server/src/routes/index.ts` — mounted `/trades`
+- `npx prisma generate` ✓ | `npm run build` (server) — zero TS errors ✓
+- **Action needed:** `npm run db:push` to push Trade + PositionLtp tables to Hostinger MySQL
+
 ### 2026-04-05 — /fe MoneyInput reusable component
 - New util: `src/utils/money.ts` — added `rupeesToWords(n)` Indian-words converter (e.g. 150000 → "One Lakh Fifty Thousand")
 - New component: `src/components/ui/MoneyInput.tsx` — reusable money input with ₹ prefix + live words subtext on every keystroke
@@ -211,6 +281,53 @@ No spec currently in-progress.
 - `npm run build` (server) — zero TS errors ✓
 - 07 upgraded from [~] in-progress → [x] done — awaiting Tier 2 browser confirmation for Verified [x]
 - All 9 specs now [x] done; specs 02–05 and 07 still need Tier 2 browser verification
+
+### 2026-05-10 — /fe @specs/08-income-tracker.md
+
+- `src/types/income.ts` — IncomeRecord, IncomeCategory, RecurringFrequency, IncomeSummary types
+- `src/hooks/useIncome.ts` — useIncome, useIncomeSummary, useAddIncome, useUpdateIncome, useDeleteIncome
+- `src/components/income/IncomeStats.tsx` — 4 summary stat cards (monthly, YTD, primary source, MoM)
+- `src/components/income/IncomeForm.tsx` — add/edit modal
+- `src/components/income/IncomeList.tsx` — sortable table + mobile card layout
+- `src/pages/IncomePage.tsx` — route page with month nav + category filter
+- `src/App.tsx` — added `/income` lazy route
+- `src/components/layout/Sidebar.tsx` — Income nav item
+- `npm run build` — zero TS errors ✓ (8.97s)
+
+### 2026-05-10 — /fe @specs/09-expense-tracker.md (UI redesign — inline grid, no popup)
+
+- `src/components/expense/InlineExpenseRow.tsx` — NEW: category row with quick-amount input (Enter saves instantly), inline expand for merchant/date/recurring/notes, green flash on save
+- `src/components/expense/QuickEntryGrid.tsx` — NEW: 3-column card layout (Fixed/Discretionary/Loan); each card shows category rows, monthly subtotal, footer "Add [Type]" inline form; mobile tab switcher (one column at a time)
+- `src/pages/ExpensePage.tsx` — REWRITTEN: removes add-modal flow; integrates QuickEntryGrid; ExpenseForm now used only as edit-only modal (opened from ExpenseList pencil)
+- `src/types/expense.ts` — ExpenseType, FixedCategory, DiscretionaryCategory, LoanCategory, ExpenseCategory, ExpenseRecord, ExpenseSummary types (unchanged)
+- `src/hooks/useExpenses.ts` — useExpenses, useExpenseSummary, useAddExpense, useUpdateExpense, useDeleteExpense; invalidates `expenses`/`networth`/`cashflow` on mutation (unchanged)
+- `src/components/expense/ExpenseStats.tsx` — 4 stat cards (unchanged)
+- `src/components/expense/ExpenseForm.tsx` — edit-only modal (unchanged)
+- `src/components/expense/ExpenseList.tsx` — sortable table + search (unchanged)
+- `src/components/expense/CategoryBreakdown.tsx` — donut chart (unchanged)
+- `npm run build` — zero TS errors ✓ (10.62s)
+
+### 2026-05-10 — /be @specs/09-expense-tracker.md
+
+- `server/prisma/schema.prisma` — `ExpenseRecord` model + `ExpenseType` (FIXED/DISCRETIONARY/LOAN) + `ExpenseCategory` (27 values) + `ImportSource` enums; `expenseRecords` relation on User
+- `server/src/services/expense.service.ts` — list (month/type/category/q filter, take:500), create (single or array, duplicate detection → 409), update, soft-delete, summary (byType + byCategory aggregation via groupBy)
+- `server/src/controllers/expense.controller.ts` — 5 handlers; Zod for query params; uses AuthRequest
+- `server/src/routes/expense.ts` — `/summary` before `/:id`; ExpenseBodyBase + refine for category↔type validation; UpdateSchema from partial base; BatchOrSingleSchema union
+- `server/src/routes/index.ts` — mounted `/expenses`
+- `npx prisma generate` — **blocked by locked DLL (dev server running); run after stopping server**
+- `npm run build` (server) — zero TS errors ✓
+- **Action needed:** stop dev server → `npx prisma generate` → `npm run db:push` → restart
+
+### 2026-05-10 — /be @specs/08-income-tracker.md
+
+- `server/prisma/schema.prisma` — `IncomeRecord` model + `IncomeCategory` + `RecurringFrequency` enums; `incomeRecords` relation on User
+- `server/src/services/income.service.ts` — list (month/category filter, take:200), create, update, soft-delete, summary (byCategory + monthlyTotal + ytdTotal)
+- `server/src/controllers/income.controller.ts` — 5 handlers; inline Zod for query params
+- `server/src/routes/income.ts` — `/summary` before `/:id`; Zod body schemas
+- `server/src/routes/index.ts` — mounted `/income`
+- `npx prisma generate` — client regenerated ✓
+- `npm run build` (server) — zero TS errors ✓
+- **Action needed:** `npm run db:push` to push schema to Hostinger MySQL
 
 ### 2026-04-05 — /fe @specs/07-tax-alerts.md
 - New types: `src/types/tax.ts` — TaxInputs, BucketAllocation, BucketIdeal

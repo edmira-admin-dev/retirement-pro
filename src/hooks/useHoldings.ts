@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../lib/api'
 import { toRupees, toPaise } from '../utils/money'
 import type { Holding, HoldingInput } from '../types/holdings'
+import { NET_WORTH_HISTORY_KEY } from './useNetWorthHistory'
 
 const QUERY_KEY = ['holdings'] as const
 
@@ -52,7 +53,10 @@ export function useAddHolding() {
       })
       return mapHolding(data.data)
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY })
+      queryClient.invalidateQueries({ queryKey: NET_WORTH_HISTORY_KEY })
+    },
   })
 }
 
@@ -66,7 +70,10 @@ export function useUpdateHolding() {
       const { data } = await api.patch<{ data: ApiHolding }>(`/holdings/${id}`, body)
       return mapHolding(data.data)
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY })
+      queryClient.invalidateQueries({ queryKey: NET_WORTH_HISTORY_KEY })
+    },
   })
 }
 
@@ -76,6 +83,9 @@ export function useDeleteHolding() {
     mutationFn: async (id: string) => {
       await api.delete(`/holdings/${id}`)
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY })
+      queryClient.invalidateQueries({ queryKey: NET_WORTH_HISTORY_KEY })
+    },
   })
 }

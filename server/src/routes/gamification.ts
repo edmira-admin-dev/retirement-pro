@@ -10,7 +10,10 @@ const BadgeSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
-  earnedAt: z.string().nullable(),
+  icon: z.string(),
+  earned: z.boolean(),
+  earnedDate: z.string().optional(),
+  category: z.enum(['portfolio', 'goals', 'health', 'consistency']),
 })
 
 const GamificationPatchSchema = z.object({

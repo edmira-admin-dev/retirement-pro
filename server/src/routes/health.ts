@@ -19,7 +19,13 @@ const HealthProfileSchema = z.object({
   hasNominations: z.boolean().optional(),
 })
 
+const ScoreSchema = z.object({
+  score: z.number().int().min(0).max(100),
+})
+
 router.get('/', auth, healthController.get)
 router.put('/', auth, validate(HealthProfileSchema), healthController.upsert)
+router.get('/score-history', auth, healthController.getScoreHistory)
+router.post('/score-history', auth, validate(ScoreSchema), healthController.saveScoreHistory)
 
 export default router

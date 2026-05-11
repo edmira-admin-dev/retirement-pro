@@ -104,6 +104,10 @@ export function NetWorthSummary({ holdings }: NetWorthSummaryProps) {
               ({isGain ? '+' : ''}{gainPct.toFixed(2)}%)
             </span>
           </div>
+          <p className="text-xs text-theme-muted">
+            Invested:{' '}
+            <span className="font-medium text-theme-text">{formatRupeesCompact(totalInvested)}</span>
+          </p>
         </div>
 
         {pieData.length > 0 && (

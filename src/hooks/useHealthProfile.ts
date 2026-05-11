@@ -1,9 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../lib/api'
 import { toRupees, toPaise } from '../utils/money'
-import type { HealthInputs } from '../types/health'
+import type { HealthInputs, HealthScoreEntry } from '../types/health'
 
 export const HEALTH_QUERY_KEY = ['health-profile'] as const
+export const HEALTH_SCORE_HISTORY_KEY = ['health-score-history'] as const
 
 interface ApiHealthProfile {
   id: string
@@ -38,7 +39,7 @@ export function useHealthProfile() {
   return useQuery({
     queryKey: HEALTH_QUERY_KEY,
     queryFn: async () => {
-      const { data } = await api.get<{ data: ApiHealthProfile | null }>('/health')
+      const { data } = await api.get<{ data: ApiHealthProfile | null }>('/health-profile')
       return data.data ? mapProfile(data.data) : null
     },
   })
@@ -48,7 +49,7 @@ export function useSaveHealthProfile() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (inputs: HealthInputs) => {
-      const { data } = await api.put<{ data: ApiHealthProfile }>('/health', {
+      const { data } = await api.put<{ data: ApiHealthProfile }>('/health-profile', {
         monthlyIncome: toPaise(inputs.monthlyIncome),
         monthlyExpenses: toPaise(inputs.monthlyExpenses),
         monthlyEMIs: toPaise(inputs.monthlyEMIs),
@@ -63,5 +64,25 @@ export function useSaveHealthProfile() {
       return mapProfile(data.data)
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: HEALTH_QUERY_KEY }),
+  })
+}
+
+export function useHealthScoreHistory() {
+  return useQuery({
+    queryKey: HEALTH_SCORE_HISTORY_KEY,
+    queryFn: async () => {
+      const { data } = await api.get<{ data: HealthScoreEntry[] }>('/health-profile/score-history')
+      return data.data
+    },
+  })
+}
+
+export function useSaveHealthScore() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (score: number) => {
+      await api.post('/health-profile/score-history', { score })
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: HEALTH_SCORE_HISTORY_KEY }),
   })
 }

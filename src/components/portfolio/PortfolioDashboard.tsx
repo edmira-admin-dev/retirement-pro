@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Landmark, ScrollText, TrendingUp, Gem, Building2, Globe, Briefcase, Package, ChevronDown, ChevronUp, Plus } from 'lucide-react'
+import { Landmark, ScrollText, TrendingUp, Gem, Building2, Globe, Briefcase, Package, ChevronDown, ChevronUp, Plus, LayoutGrid, TableProperties } from 'lucide-react'
 import { HoldingCard } from './HoldingCard'
+import { HoldingsTable } from './HoldingsTable'
 import { NetWorthSummary } from './NetWorthSummary'
 import { usePortfolioUIStore } from '../../stores/portfolioUIStore'
 import { formatRupeesCompact } from '../../utils/money'
@@ -95,7 +96,10 @@ interface PortfolioDashboardProps {
   holdings: Holding[]
 }
 
+type ViewMode = 'overview' | 'holdings'
+
 export function PortfolioDashboard({ holdings }: PortfolioDashboardProps) {
+  const [view, setView] = useState<ViewMode>('overview')
   const openQuickAdd = usePortfolioUIStore((s) => s.openQuickAdd)
   const grouped = GROUPS.map((g) => ({
     group: g,
@@ -108,30 +112,61 @@ export function PortfolioDashboard({ holdings }: PortfolioDashboardProps) {
     <div className="space-y-4">
       <NetWorthSummary holdings={holdings} />
 
-      {populated.map(({ group, holdings: gh }) => (
-        <GroupSection key={group.id} group={group} holdings={gh} />
-      ))}
+      <div className="flex items-center gap-1 p-1 bg-theme-bg-alt border border-theme-border rounded-lg w-fit">
+        <button
+          onClick={() => setView('overview')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary ${
+            view === 'overview'
+              ? 'bg-theme-card text-theme-text shadow-sm'
+              : 'text-theme-muted hover:text-theme-text'
+          }`}
+        >
+          <LayoutGrid size={13} />
+          Overview
+        </button>
+        <button
+          onClick={() => setView('holdings')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary ${
+            view === 'holdings'
+              ? 'bg-theme-card text-theme-text shadow-sm'
+              : 'text-theme-muted hover:text-theme-text'
+          }`}
+        >
+          <TableProperties size={13} />
+          Holdings
+        </button>
+      </div>
 
-      {unpopulated.length > 0 && (
-        <div className="bg-theme-card border border-theme-border rounded-xl p-4">
-          <p className="text-xs font-semibold text-theme-muted uppercase tracking-wide mb-3">Not started yet</p>
-          <div className="flex flex-wrap gap-2">
-            {unpopulated.map(({ group }) => {
-              const Icon = group.icon
-              return (
-                <button
-                  key={group.id}
-                  onClick={() => openQuickAdd(group.id)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${group.bgClass} ${group.colorClass} text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary`}
-                >
-                  <Icon size={13} />
-                  {group.label}
-                  <Plus size={11} />
-                </button>
-              )
-            })}
-          </div>
-        </div>
+      {view === 'holdings' ? (
+        <HoldingsTable holdings={holdings} />
+      ) : (
+        <>
+          {populated.map(({ group, holdings: gh }) => (
+            <GroupSection key={group.id} group={group} holdings={gh} />
+          ))}
+
+          {unpopulated.length > 0 && (
+            <div className="bg-theme-card border border-theme-border rounded-xl p-4">
+              <p className="text-xs font-semibold text-theme-muted uppercase tracking-wide mb-3">Not started yet</p>
+              <div className="flex flex-wrap gap-2">
+                {unpopulated.map(({ group }) => {
+                  const Icon = group.icon
+                  return (
+                    <button
+                      key={group.id}
+                      onClick={() => openQuickAdd(group.id)}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${group.bgClass} ${group.colorClass} text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary`}
+                    >
+                      <Icon size={13} />
+                      {group.label}
+                      <Plus size={11} />
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   )
