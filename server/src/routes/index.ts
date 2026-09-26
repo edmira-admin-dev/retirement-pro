@@ -11,7 +11,15 @@ import incomeRoutes from './income'
 import expenseRoutes from './expense'
 import preferencesRoutes from './preferences'
 import tradeRoutes from './trade'
-import brokerRoutes from './broker'
+import signalRoutes from './signal'
+import vcpRoutes from './vcp'
+import tradebookRoutes from './tradebook'
+import marketRoutes from './market'
+import taxpnlRoutes from './taxpnl'
+import equityHoldingsRoutes from './equity-holdings'
+import mutualFundHoldingsRoutes from './mutual-fund-holdings'
+import newsRoutes from './news'
+import factorScorecardRoutes from './factor-scorecard'
 
 const router = Router()
 
@@ -31,6 +39,14 @@ router.use('/income', incomeRoutes)
 router.use('/expenses', expenseRoutes)
 router.use('/preferences', preferencesRoutes)
 router.use('/trades', tradeRoutes)
-router.use('/integrations', brokerRoutes)
+router.use('/signals', signalRoutes)
+router.use('/vcp-signals', vcpRoutes)
+router.use('/tradebook', tradebookRoutes)
+router.use('/market', marketRoutes)
+router.use('/taxpnl', taxpnlRoutes)
+router.use('/equity-holdings', equityHoldingsRoutes)
+router.use('/mutual-fund-holdings', mutualFundHoldingsRoutes)
+router.use('/news', newsRoutes)
+router.use('/factor-scorecard', factorScorecardRoutes)
 
 export default router

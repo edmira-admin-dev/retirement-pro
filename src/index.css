@@ -86,3 +86,34 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+.prose-research {
+  @apply text-sm text-theme-text-sec leading-relaxed;
+}
+.prose-research p {
+  @apply my-2.5;
+}
+.prose-research strong {
+  @apply text-theme-text font-semibold;
+}
+.prose-research table {
+  @apply w-full text-xs my-3 border-collapse;
+}
+.prose-research th {
+  @apply bg-theme-bg-alt text-theme-muted text-left px-2.5 py-1.5 border border-theme-border font-semibold;
+}
+.prose-research td {
+  @apply px-2.5 py-1.5 border border-theme-border align-top;
+}
+.prose-research .prose-research-table-wrap {
+  @apply overflow-x-auto;
+}
+.prose-research ul, .prose-research ol {
+  @apply my-2.5 pl-5 space-y-1;
+}
+.prose-research li {
+  @apply list-disc;
+}
+.prose-research blockquote {
+  @apply border-l-4 border-theme-primary pl-3 my-3 text-theme-text font-medium;
+}

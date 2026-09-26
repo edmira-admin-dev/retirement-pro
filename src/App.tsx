@@ -10,16 +10,20 @@ const LandingPage = lazy(() => import('./pages/LandingPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
-const PortfolioPage = lazy(() => import('./pages/PortfolioPage'))
 const CalculatorPage = lazy(() => import('./pages/CalculatorPage'))
 const HealthPage = lazy(() => import('./pages/HealthPage'))
 const GoalsPage = lazy(() => import('./pages/GoalsPage'))
 const IncomePage = lazy(() => import('./pages/IncomePage'))
 const ExpensePage = lazy(() => import('./pages/ExpensePage'))
 const TradingJournalPage = lazy(() => import('./pages/TradingJournalPage'))
-const BrokerHubPage = lazy(() => import('./pages/BrokerHubPage'))
-const KiteConnectPage = lazy(() => import('./pages/KiteConnectPage'))
-const GrowwConnectPage = lazy(() => import('./pages/GrowwConnectPage'))
+const TradeBookPage = lazy(() => import('./pages/TradeBookPage'))
+const TaxPnlPage = lazy(() => import('./pages/TaxPnlPage'))
+const TradeSignalPage = lazy(() => import('./pages/TradeSignalPage'))
+const VCPSignalPage = lazy(() => import('./pages/VCPSignalPage'))
+const EquityHoldingsPage = lazy(() => import('./pages/EquityHoldingsPage'))
+const NewsFeedPage = lazy(() => import('./pages/NewsFeedPage'))
+const StockResearchPage = lazy(() => import('./pages/StockResearchPage'))
+const FactorScorecardPage = lazy(() => import('./pages/FactorScorecardPage'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 function AppRoutes() {
@@ -56,16 +60,21 @@ function AppRoutes() {
           }
         >
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/portfolio" element={<PortfolioPage />} />
           <Route path="/calculator" element={<CalculatorPage />} />
           <Route path="/health" element={<HealthPage />} />
           <Route path="/goals" element={<GoalsPage />} />
           <Route path="/income" element={<IncomePage />} />
           <Route path="/expenses" element={<ExpensePage />} />
           <Route path="/trading" element={<TradingJournalPage />} />
-          <Route path="/trading/brokers" element={<BrokerHubPage />} />
-          <Route path="/trading/kite" element={<KiteConnectPage />} />
-          <Route path="/trading/groww" element={<GrowwConnectPage />} />
+          <Route path="/tradebook" element={<TradeBookPage />} />
+          <Route path="/taxpnl" element={<TaxPnlPage />} />
+          <Route path="/signals" element={<TradeSignalPage />} />
+          <Route path="/vcp-signals" element={<VCPSignalPage />} />
+          <Route path="/factor-scorecard" element={<FactorScorecardPage />} />
+          <Route path="/holdings/equity" element={<EquityHoldingsPage />} />
+          <Route path="/news" element={<NewsFeedPage />} />
+          <Route path="/stock" element={<StockResearchPage />} />
+          <Route path="/stock/:ticker" element={<StockResearchPage />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

@@ -1,6 +1,7 @@
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -28,7 +29,23 @@ model User {
   preferences        UserPreferences?
   trades             Trade[]
   positionLtps       PositionLtp[]
-  brokerConnections  BrokerConnection[]
+  tradeSignals       TradeSignal[]
+  vcpSignals         VCPSignal[]
+  tradeUploads       TradeUpload[]
+  tradeRecords       TradeRecord[]
+  dividendRecords    DividendRecord[]
+  agtsCharges        AgtsCharge[]
+  stockHoldings      StockHolding[]
+  realizedPnlRecords RealizedPnlRecord[]
+  brokerHoldings     BrokerHolding[]
+  equityHoldings     EquityHolding[]
+  mutualFundHoldings MutualFundHolding[]
+  factorScorecardUploads FactorScorecardUpload[]
+  factorScorecardEntries FactorScorecardEntry[]
+  factorScorecardFundamentalsUploads FactorScorecardFundamentalsUpload[]
+  factorScorecardFundamentals        FactorScorecardFundamental[]
+  factorScorecardRuns                FactorScorecardRun[]
+  factorScorecardModelScores         FactorScorecardModelScore[]
 
   @@index([email])
   @@index([deletedAt])
@@ -47,20 +64,20 @@ model RefreshToken {
 }
 
 model Holding {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   userId        String
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   name          String
   assetClass    AssetClass
-  currentValue  BigInt    // paise
-  investedValue BigInt    // paise
+  currentValue  BigInt // paise
+  investedValue BigInt // paise
   units         Float?
   nav           Float?
-  notes         String?   @db.Text
+  notes         String?    @db.Text
   deletedAt     DateTime?
-  lastUpdated   DateTime  @default(now())
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  lastUpdated   DateTime   @default(now())
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 
   @@index([userId])
   @@index([userId, deletedAt])
@@ -74,8 +91,8 @@ model FireProfile {
   currentAge            Int
   retirementAge         Int      @default(45)
   lifeExpectancy        Int      @default(90)
-  currentMonthlyExpense Int      // paise
-  medicalMonthlyExpense Int      // paise
+  currentMonthlyExpense Int // paise
+  medicalMonthlyExpense Int // paise
   lifestyleBuffer       Float    @default(0)
   expectedReturnPre     Float    @default(12)
   expectedReturnPost    Float    @default(8)
@@ -98,12 +115,12 @@ model HealthProfile {
   id                 String   @id @default(cuid())
   userId             String   @unique
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  monthlyIncome      Int      // paise
-  monthlyExpenses    Int      // paise
-  monthlyEMIs        Int      // paise
-  liquidAssets       Int      // paise
-  totalLiabilities   Int      // paise
-  monthlySavings     Int      // paise
+  monthlyIncome      Int // paise
+  monthlyExpenses    Int // paise
+  monthlyEMIs        Int // paise
+  liquidAssets       Int // paise
+  totalLiabilities   Int // paise
+  monthlySavings     Int // paise
   hasTermInsurance   Boolean  @default(false)
   hasHealthInsurance Boolean  @default(false)
   hasWill            Boolean  @default(false)
@@ -120,9 +137,9 @@ model Goal {
   user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   name              String
   category          GoalCategory
-  targetAmount      Int          // paise
+  targetAmount      Int // paise
   targetYear        Int
-  currentAllocation Int          // paise
+  currentAllocation Int // paise
   inflationRate     Float        @default(6)
   notes             String?      @db.Text
   deletedAt         DateTime?
@@ -137,7 +154,7 @@ model Gamification {
   id              String   @id @default(cuid())
   userId          String   @unique
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  badges          Json     // Badge[]
+  badges          Json // Badge[]
   streakDays      Int      @default(0)
   lastVisitDate   String
   dismissedNudges Json     @default("[]") // string[]
@@ -164,7 +181,7 @@ model NetWorthSnapshot {
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   valueInPaise BigInt
-  snapshotDate String   // YYYY-MM-DD
+  snapshotDate String // YYYY-MM-DD
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -177,7 +194,7 @@ model HealthScoreHistory {
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   score        Int
-  snapshotDate String   // YYYY-MM-DD
+  snapshotDate String // YYYY-MM-DD
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -186,19 +203,19 @@ model HealthScoreHistory {
 }
 
 model IncomeRecord {
-  id          String            @id @default(cuid())
+  id          String             @id @default(cuid())
   userId      String
-  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   source      String
   amountPaise Int
   category    IncomeCategory
-  date        String            // YYYY-MM-DD
-  recurring   Boolean           @default(false)
+  date        String // YYYY-MM-DD
+  recurring   Boolean            @default(false)
   frequency   RecurringFrequency @default(ONE_TIME)
-  notes       String?           @db.Text
+  notes       String?            @db.Text
   deletedAt   DateTime?
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 
   @@index([userId])
   @@index([userId, deletedAt])
@@ -259,7 +276,7 @@ model ExpenseRecord {
   amountPaise  Int
   expenseType  ExpenseType
   category     ExpenseCategory
-  date         String          // YYYY-MM-DD
+  date         String // YYYY-MM-DD
   recurring    Boolean         @default(false)
   notes        String?         @db.Text
   importedFrom ImportSource?
@@ -322,8 +339,8 @@ model UserPreferences {
   id               String   @id @default(cuid())
   userId           String   @unique
   user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  expenseViewMonth String?  // YYYY-MM
-  incomeViewMonth  String?  // YYYY-MM
+  expenseViewMonth String? // YYYY-MM
+  incomeViewMonth  String? // YYYY-MM
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -331,23 +348,23 @@ model UserPreferences {
 }
 
 model Trade {
-  id             String       @id @default(cuid())
+  id             String      @id @default(cuid())
   userId         String
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   symbol         String
   exchange       Exchange
   segment        Segment
   tradeType      TradeType
   quantity       Int
   pricePaise     Int
-  date           String       // YYYY-MM-DD
-  brokeragePaise Int          @default(0)
-  notes          String?      @db.Text
-  broker         String?      // KITE | GROWW | ANGELONE | HDFC_SKY | null
-  importedFrom   TradeSource  @default(MANUAL)
+  date           String // YYYY-MM-DD
+  brokeragePaise Int         @default(0)
+  notes          String?     @db.Text
+  broker         String? // KITE | GROWW | ANGELONE | HDFC_SKY | null
+  importedFrom   TradeSource @default(MANUAL)
   deletedAt      DateTime?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 
   @@index([userId])
   @@index([userId, deletedAt])
@@ -391,23 +408,376 @@ enum TradeSource {
   GROWW
 }
 
-model BrokerConnection {
-  id                String    @id @default(cuid())
-  userId            String
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  broker            String    // KITE | GROWW | ANGELONE | HDFC_SKY
-  connectionType    String    // API | CSV
-  status            String    @default("DISCONNECTED")
-  credentialsJson   String?   @db.Text
-  lastSyncedAt      DateTime?
-  errorMessage      String?
-  tradesSynced      Int       @default(0)
-  duplicatesSkipped Int       @default(0)
-  deletedAt         DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+model TradeSignal {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date        String // YYYY-MM-DD
+  broker      String // KITE | GROWW
+  signals     Json // StockSignal[]
+  generatedAt DateTime @default(now())
 
-  @@unique([userId, broker])
+  @@unique([userId, date])
   @@index([userId])
-  @@index([userId, deletedAt])
 }
+
+model VCPSignal {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date        String // YYYY-MM-DD
+  signals     Json // VCPStockSignal[]
+  generatedAt DateTime @default(now())
+
+  @@unique([userId, date])
+  @@index([userId])
+}
+
+model TradeUpload {
+  id              String           @id @default(cuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fileName        String
+  uploadType      String // TRADEBOOK_CSV | AGTS_XLSX | DIVIDEND_XLSX
+  periodFrom      String?
+  periodTo        String?
+  createdAt       DateTime         @default(now())
+  tradeRecords    TradeRecord[]
+  dividendRecords DividendRecord[]
+  agtsCharges     AgtsCharge[]
+
+  @@index([userId])
+}
+
+model TradeRecord {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  uploadId      String
+  upload        TradeUpload @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  symbol        String
+  isin          String?
+  tradeDate     String
+  exchange      String
+  segment       String      @default("EQ")
+  tradeType     String
+  quantity      Float
+  price         Float
+  tradeId       String
+  orderId       String?
+  executionTime String?
+  createdAt     DateTime    @default(now())
+
+  @@unique([userId, tradeId])
+  @@index([userId])
+  @@index([userId, tradeDate])
+  @@index([userId, symbol])
+}
+
+model DividendRecord {
+  id               String       @id @default(cuid())
+  userId           String
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  uploadId         String?
+  upload           TradeUpload? @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  broker           String? // ZERODHA | GROWW | HDFC | ANGEL — null = legacy tradebook
+  symbol           String
+  isin             String
+  exDate           String
+  quantity         Float
+  dividendPerShare Float
+  netAmount        Float
+  createdAt        DateTime     @default(now())
+
+  @@unique([userId, broker, isin, exDate])
+  @@index([userId])
+  @@index([userId, exDate])
+  @@index([userId, broker])
+}
+
+model AgtsCharge {
+  id          String       @id @default(cuid())
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  uploadId    String?
+  upload      TradeUpload? @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  broker      String? // ZERODHA | GROWW | HDFC | ANGEL — null = legacy tradebook
+  periodFrom  String
+  periodTo    String
+  accountHead String
+  amount      Float
+  createdAt   DateTime     @default(now())
+
+  @@unique([userId, broker, periodFrom, periodTo, accountHead])
+  @@index([userId])
+  @@index([userId, broker])
+}
+
+model StockHolding {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  symbol            String
+  isin              String
+  sector            String
+  quantityAvailable Float
+  quantityLongTerm  Float    @default(0)
+  avgPrice          Float
+  currentPrice      Float
+  unrealizedPnl     Float
+  unrealizedPnlPct  Float
+  asOfDate          String // YYYY-MM-DD
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([userId, symbol, isin, asOfDate])
+  @@index([userId])
+  @@index([userId, asOfDate])
+}
+
+model RealizedPnlRecord {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  broker        String? // ZERODHA | GROWW | HDFC | ANGEL — null = legacy tradebook
+  symbol        String
+  isin          String
+  entryDate     String
+  exitDate      String
+  quantity      Float
+  buyValue      Float
+  sellValue     Float
+  profit        Float
+  holdingType   String // STCG | LTCG | INTRADAY | NON_EQ_STCG | NON_EQ_LTCG
+  taxableProfit Float
+  tradeCharges  Float    @default(0) // consolidated per-trade charges (STT + brokerage + taxes)
+  periodFrom    String
+  periodTo      String
+  createdAt     DateTime @default(now())
+
+  @@unique([userId, broker, symbol, isin, entryDate, exitDate, holdingType, quantity])
+  @@index([userId])
+  @@index([userId, broker])
+  @@index([userId, exitDate])
+}
+
+model BrokerHolding {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  broker            String // ZERODHA | GROWW | HDFC | ANGEL
+  symbol            String
+  isin              String
+  sector            String   @default("")
+  quantityAvailable Float
+  quantityLongTerm  Float    @default(0)
+  avgPrice          Float
+  currentPrice      Float
+  unrealizedPnl     Float
+  unrealizedPnlPct  Float
+  asOfDate          String // YYYY-MM-DD
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([userId, broker, isin, asOfDate])
+  @@index([userId, broker])
+  @@index([userId, broker, asOfDate])
+}
+
+// Consolidated equity holdings uploaded from a Tickertape (or similar
+// cross-broker aggregator) CSV export — one row per symbol per snapshot date,
+// enriched with sector/industry from the bundled instrument master so the UI
+// never needs to re-look these up.
+model EquityHolding {
+  id                 String   @id @default(cuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  symbol             String
+  companyName        String   @default("")
+  sector             String   @default("Uncategorized")
+  industry           String   @default("Uncategorized")
+  quantity           Float
+  avgCost            Float
+  ltp                Float
+  investedValue      Float
+  currentValue       Float
+  pnl                Float
+  pnlPct             Float
+  portfolioWeightPct Float    @default(0)
+  dayChange          Float    @default(0)
+  dayChangePct       Float    @default(0)
+  asOfDate           String // YYYY-MM-DD
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([userId, symbol, asOfDate])
+  @@index([userId])
+  @@index([userId, asOfDate])
+}
+
+// Mutual fund holdings uploaded from a Tickertape (or similar cross-broker
+// aggregator) CSV export — one row per fund per snapshot date.
+model MutualFundHolding {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fundName      String
+  amcName       String   @default("")
+  category      String   @default("")
+  subCategory   String   @default("")
+  planType      String   @default("")
+  optionType    String   @default("")
+  nav           Float
+  units         Float
+  investedValue Float
+  currentValue  Float
+  weightPct     Float    @default(0)
+  pnl           Float
+  pnlPct        Float
+  xirrPct       Float    @default(0)
+  investedSince String   @default("") // YYYY-MM-DD
+  asOfDate      String // YYYY-MM-DD
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([userId, fundName, asOfDate])
+  @@index([userId])
+  @@index([userId, asOfDate])
+}
+
+model FactorScorecardUpload {
+  id        String                 @id @default(cuid())
+  userId    String
+  user      User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fileName  String
+  universe  String // NIFTY100 | NIFTY_MIDCAP150
+  runDate   String // YYYY-MM-DD — date the scorecard was run, user-supplied at upload
+  source    String                 @default("MANUAL_XLSX") // MANUAL_XLSX | AI_GENERATED
+  createdAt DateTime               @default(now())
+  entries   FactorScorecardEntry[]
+
+  @@unique([userId, universe, runDate])
+  @@index([userId])
+}
+
+model FactorScorecardEntry {
+  id             String                       @id @default(cuid())
+  userId         String
+  user           User                         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  uploadId       String
+  upload         FactorScorecardUpload        @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  universe       String // NIFTY100 | NIFTY_MIDCAP150
+  runDate        String // YYYY-MM-DD
+  rank           Int
+  ticker         String
+  sector         String
+  cmp            Float
+  f1             Float
+  f2             Float
+  f3             Float
+  f4             Float
+  f5             Float
+  f6             Float
+  f7             Float
+  f8             Float
+  f9             Float
+  f10            Float
+  score          Float
+  recommendation String
+  reasoning      Json // { moat, financial, growth, valuation, mgmt, earnings, macro, risk, dividend, liquidity }
+  createdAt      DateTime                     @default(now())
+  modelScores    FactorScorecardModelScore[]
+
+  @@unique([userId, universe, runDate, ticker])
+  @@index([userId])
+  @@index([userId, universe])
+  @@index([userId, runDate])
+}
+
+model FactorScorecardFundamentalsUpload {
+  id        String                       @id @default(cuid())
+  userId    String
+  user      User                         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fileName  String
+  universe  String // NIFTY100 | NIFTY_MIDCAP150
+  runDate   String // YYYY-MM-DD
+  createdAt DateTime                     @default(now())
+  rows      FactorScorecardFundamental[]
+  runs      FactorScorecardRun[]
+
+  @@unique([userId, universe, runDate])
+  @@index([userId])
+}
+
+model FactorScorecardFundamental {
+  id                 String                            @id @default(cuid())
+  userId             String
+  user               User                              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  uploadId           String
+  upload             FactorScorecardFundamentalsUpload @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  ticker             String
+  sector             String
+  cmp                Float
+  pe                 Float?
+  pb                 Float?
+  roe                Float?
+  roce               Float?
+  debtToEquity       Float?
+  revenueCagr3yr     Float?
+  profitCagr3yr      Float?
+  dividendYieldPct   Float?
+  payoutPct          Float?
+  promoterHoldingPct Float?
+  fiiDiiHoldingPct   Float?
+  beta               Float?
+  notes              String?                           @db.Text
+  createdAt          DateTime                          @default(now())
+
+  @@unique([uploadId, ticker])
+  @@index([userId])
+}
+
+model FactorScorecardRun {
+  id                   String                            @id @default(cuid())
+  userId               String
+  user                 User                              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fundamentalsUploadId String
+  fundamentalsUpload   FactorScorecardFundamentalsUpload @relation(fields: [fundamentalsUploadId], references: [id], onDelete: Cascade)
+  universe             String
+  runDate              String
+  status               String                            @default("PENDING") // PENDING | RUNNING | DONE | FAILED
+  batchesTotal         Int                               @default(0)
+  batchesDone          Int                               @default(0)
+  resultUploadId       String?
+  error                String?                           @db.Text
+  createdAt            DateTime                          @default(now())
+  updatedAt            DateTime                          @updatedAt
+
+  @@index([userId])
+}
+
+model FactorScorecardModelScore {
+  id        String               @id @default(cuid())
+  userId    String
+  user      User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entryId   String
+  entry     FactorScorecardEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  provider  String // OPENAI | GEMINI | CLAUDE
+  f1        Float
+  f2        Float
+  f3        Float
+  f4        Float
+  f5        Float
+  f6        Float
+  f7        Float
+  f8        Float
+  f9        Float
+  f10       Float
+  score     Float
+  reasoning Json
+  createdAt DateTime             @default(now())
+
+  @@unique([entryId, provider])
+  @@index([userId])
+}
+

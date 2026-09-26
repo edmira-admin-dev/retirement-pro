@@ -1,0 +1,22 @@
+{
+  "asOfDate": "2026-06-30",
+  "source": "NSE Indexogram — Nifty 50 fact sheet",
+  "methodology": "Free float market capitalization",
+  "sectors": [
+    { "sector": "Financial Services", "weightPct": 37.00 },
+    { "sector": "Oil Gas & Consumable Fuels", "weightPct": 9.79 },
+    { "sector": "Information Technology", "weightPct": 7.41 },
+    { "sector": "Automobile and Auto Components", "weightPct": 6.74 },
+    { "sector": "Fast Moving Consumer Goods", "weightPct": 5.81 },
+    { "sector": "Telecommunication", "weightPct": 5.15 },
+    { "sector": "Healthcare", "weightPct": 4.90 },
+    { "sector": "Metals & Mining", "weightPct": 4.54 },
+    { "sector": "Construction", "weightPct": 4.44 },
+    { "sector": "Consumer Durables", "weightPct": 2.75 },
+    { "sector": "Consumer Services", "weightPct": 2.75 },
+    { "sector": "Power", "weightPct": 2.73 },
+    { "sector": "Services", "weightPct": 2.33 },
+    { "sector": "Construction Materials", "weightPct": 2.29 },
+    { "sector": "Capital Goods", "weightPct": 1.35 }
+  ]
+}

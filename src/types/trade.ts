@@ -42,23 +42,6 @@ export interface TradeFilters {
   to?: string
 }
 
-export interface KiteHolding {
-  tradingsymbol: string
-  exchange: string
-  isin: string
-  product: string
-  quantity: number
-  t1_quantity: number
-  average_price: number
-  last_price: number
-  close_price: number
-  pnl: number
-  day_change: number
-  day_change_percentage: number
-  collateral_quantity: number
-  collateral_type: string | null
-}
-
 export interface TradePayload {
   symbol: string
   exchange: Exchange

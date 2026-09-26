@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard,
-  Briefcase,
   Calculator,
   Heart,
   Target,
@@ -11,6 +10,13 @@ import {
   Receipt,
   BookMarked,
   Layers,
+  Zap,
+  FileText,
+  BarChart2,
+  Newspaper,
+  Search,
+  LineChart,
+  GitBranch,
 } from 'lucide-react'
 import { useAuthStore } from '../../stores/authStore'
 
@@ -22,14 +28,20 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { to: '/dashboard', label: 'Dashboard',   icon: <LayoutDashboard size={18} /> },
-  { to: '/portfolio', label: 'Investments', icon: <Briefcase size={18} /> },
+  { to: '/news',      label: 'News',        icon: <Newspaper size={18} /> },
   { to: '/calculator', label: 'FIRE Calc',  icon: <Calculator size={18} /> },
   { to: '/health',    label: 'Health Score', icon: <Heart size={18} /> },
   { to: '/goals',     label: 'Goals',        icon: <Target size={18} /> },
+  { to: '/holdings/equity', label: 'Equity Holdings', icon: <Layers size={18} /> },
   { to: '/income',   label: 'Income',       icon: <Wallet size={18} /> },
   { to: '/expenses', label: 'Expenses',     icon: <Receipt size={18} /> },
   { to: '/trading',         label: 'Portfolio',   icon: <BookMarked size={18} /> },
-  { to: '/trading/brokers', label: 'Brokers',     icon: <Layers size={18} /> },
+  { to: '/tradebook',           label: 'Tradebook', icon: <FileText size={18} /> },
+  { to: '/taxpnl',             label: 'Tax P&L',   icon: <BarChart2 size={18} /> },
+  { to: '/stock',               label: 'Stock Research', icon: <Search size={18} /> },
+  { to: '/factor-scorecard',    label: 'Factor Scorecard', icon: <LineChart size={18} /> },
+  { to: '/signals',             label: 'Signals',  icon: <Zap size={18} /> },
+  { to: '/vcp-signals',         label: 'VCP Signals', icon: <GitBranch size={18} /> },
 ]
 
 interface SidebarProps {

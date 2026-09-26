@@ -16,8 +16,11 @@ export function createApp() {
   app.use(helmet())
   app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }))
 
+  // Disable ETags — API responses change dynamically; 304s cause stale data
+  app.set('etag', false)
+
   // Body parsing
-  app.use(express.json({ limit: '10kb' }))
+  app.use(express.json({ limit: '5mb' }))
   app.use(express.urlencoded({ extended: true }))
 
   // Rate limiting

@@ -1,8 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import api from '../lib/api'
-import { toRupees, toPaise } from '../utils/money'
-import type { Holding, HoldingInput } from '../types/holdings'
-import { NET_WORTH_HISTORY_KEY } from './useNetWorthHistory'
+import { toRupees } from '../utils/money'
+import type { Holding } from '../types/holdings'
 
 const QUERY_KEY = ['holdings'] as const
 
@@ -38,54 +37,6 @@ export function useHoldings() {
     queryFn: async () => {
       const { data } = await api.get<{ data: ApiHolding[] }>('/holdings')
       return data.data.map(mapHolding)
-    },
-  })
-}
-
-export function useAddHolding() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (input: HoldingInput) => {
-      const { data } = await api.post<{ data: ApiHolding }>('/holdings', {
-        ...input,
-        currentValue: toPaise(input.currentValue),
-        investedValue: toPaise(input.investedValue),
-      })
-      return mapHolding(data.data)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY })
-      queryClient.invalidateQueries({ queryKey: NET_WORTH_HISTORY_KEY })
-    },
-  })
-}
-
-export function useUpdateHolding() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async ({ id, input }: { id: string; input: Partial<HoldingInput> }) => {
-      const body: Record<string, unknown> = { ...input }
-      if (input.currentValue !== undefined) body.currentValue = toPaise(input.currentValue)
-      if (input.investedValue !== undefined) body.investedValue = toPaise(input.investedValue)
-      const { data } = await api.patch<{ data: ApiHolding }>(`/holdings/${id}`, body)
-      return mapHolding(data.data)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY })
-      queryClient.invalidateQueries({ queryKey: NET_WORTH_HISTORY_KEY })
-    },
-  })
-}
-
-export function useDeleteHolding() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (id: string) => {
-      await api.delete(`/holdings/${id}`)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY })
-      queryClient.invalidateQueries({ queryKey: NET_WORTH_HISTORY_KEY })
     },
   })
 }

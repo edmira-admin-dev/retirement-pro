@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../lib/api'
-import type { Trade, Position, PnLSummary, TradePayload, TradeFilters, KiteHolding } from '../types/trade'
+import type { Trade, Position, PnLSummary, TradePayload, TradeFilters } from '../types/trade'
 
 export const TRADES_KEY = ['trades'] as const
 
@@ -75,17 +75,6 @@ export function useDeleteTrade() {
       await api.delete(`/trades/${id}`)
     },
     onSuccess: () => invalidateAll(qc),
-  })
-}
-
-export function useKiteHoldings() {
-  return useQuery({
-    queryKey: ['kite', 'holdings'],
-    queryFn: async () => {
-      const { data } = await api.get<{ data: KiteHolding[] }>('/integrations/kite/holdings')
-      return data.data
-    },
-    retry: false,
   })
 }
 

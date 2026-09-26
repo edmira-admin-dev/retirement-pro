@@ -1,0 +1,26 @@
+{
+  "asOfDate": "2026-06-30",
+  "source": "NSE Indexogram — Nifty Midcap 150 fact sheet",
+  "methodology": "Free float market capitalization",
+  "sectors": [
+    { "sector": "Financial Services", "weightPct": 28.29 },
+    { "sector": "Capital Goods", "weightPct": 14.43 },
+    { "sector": "Healthcare", "weightPct": 10.16 },
+    { "sector": "Automobile and Auto Components", "weightPct": 6.68 },
+    { "sector": "Consumer Services", "weightPct": 5.28 },
+    { "sector": "Information Technology", "weightPct": 4.45 },
+    { "sector": "Consumer Durables", "weightPct": 4.26 },
+    { "sector": "Fast Moving Consumer Goods", "weightPct": 4.14 },
+    { "sector": "Chemicals", "weightPct": 3.64 },
+    { "sector": "Metals & Mining", "weightPct": 3.19 },
+    { "sector": "Telecommunication", "weightPct": 3.05 },
+    { "sector": "Power", "weightPct": 2.92 },
+    { "sector": "Realty", "weightPct": 2.66 },
+    { "sector": "Oil Gas & Consumable Fuels", "weightPct": 2.49 },
+    { "sector": "Services", "weightPct": 1.63 },
+    { "sector": "Construction Materials", "weightPct": 1.08 },
+    { "sector": "Textiles", "weightPct": 0.96 },
+    { "sector": "Diversified", "weightPct": 0.35 },
+    { "sector": "Construction", "weightPct": 0.33 }
+  ]
+}

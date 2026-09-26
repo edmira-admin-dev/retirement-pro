@@ -48,7 +48,14 @@
       "WebFetch(domain:groww.in)",
       "WebFetch(domain:www.npmjs.com)",
       "WebFetch(domain:github.com)",
-      "Bash(npx ts-node -e ' *)"
+      "Bash(npx ts-node -e ' *)",
+      "Bash(npx ts-node *)",
+      "PowerShell(Out-Null *)",
+      "PowerShell(Get-NetTCPConnection *)",
+      "Bash(tasklist)",
+      "Bash(python3 -c \"import openpyxl; print\\('ok'\\)\")",
+      "Bash(python -c \"import openpyxl; print\\('ok'\\)\")",
+      "Bash(python *)"
     ]
   }
 }

@@ -1,0 +1,18 @@
+{
+  "asOfDate": "2026-06-30",
+  "source": "NSE Indexogram — Nifty500 Momentum 50 fact sheet",
+  "methodology": "Tilt weighted (momentum score + free-float market cap)",
+  "sectors": [
+    { "sector": "Capital Goods", "weightPct": 32.90 },
+    { "sector": "Financial Services", "weightPct": 23.86 },
+    { "sector": "Healthcare", "weightPct": 11.73 },
+    { "sector": "Metals & Mining", "weightPct": 9.95 },
+    { "sector": "Power", "weightPct": 8.33 },
+    { "sector": "Automobile and Auto Components", "weightPct": 6.07 },
+    { "sector": "Telecommunication", "weightPct": 4.24 },
+    { "sector": "Chemicals", "weightPct": 1.44 },
+    { "sector": "Services", "weightPct": 0.70 },
+    { "sector": "Information Technology", "weightPct": 0.47 },
+    { "sector": "Fast Moving Consumer Goods", "weightPct": 0.30 }
+  ]
+}
