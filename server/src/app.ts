@@ -16,7 +16,22 @@ export function createApp() {
 
   // Security middleware
   app.use(helmet({ contentSecurityPolicy: false }))
-  app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }))
+
+  const allowedOrigins = env.CORS_ORIGIN.split(',').map((o) => o.trim())
+  const allowedOriginPattern = env.CORS_ORIGIN_REGEX ? new RegExp(env.CORS_ORIGIN_REGEX) : null
+
+  app.use(
+    cors({
+      origin(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin) || allowedOriginPattern?.test(origin)) {
+          callback(null, true)
+        } else {
+          callback(new Error(`Not allowed by CORS: ${origin}`))
+        }
+      },
+      credentials: true,
+    })
+  )
 
   // Disable ETags — API responses change dynamically; 304s cause stale data
   app.set('etag', false)

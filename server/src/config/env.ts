@@ -10,6 +10,7 @@ const envSchema = z.object({
   ACCESS_TOKEN_SECRET: z.string().min(32, 'ACCESS_TOKEN_SECRET must be at least 32 chars'),
   REFRESH_TOKEN_SECRET: z.string().min(32, 'REFRESH_TOKEN_SECRET must be at least 32 chars'),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
+  CORS_ORIGIN_REGEX: z.string().optional(),
 })
 
 const parsed = envSchema.safeParse(process.env)
