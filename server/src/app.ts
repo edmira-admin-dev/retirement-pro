@@ -1,10 +1,12 @@
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
+import swaggerUi from 'swagger-ui-express'
 import { env } from './config/env'
 import { globalLimiter } from './middleware/rateLimiter'
 import { errorHandler } from './middleware/errorHandler'
 import routes from './routes'
+import { openApiSpec } from './docs/openapi'
 
 export function createApp() {
   const app = express()
@@ -13,7 +15,7 @@ export function createApp() {
   app.set('trust proxy', 1)
 
   // Security middleware
-  app.use(helmet())
+  app.use(helmet({ contentSecurityPolicy: false }))
   app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }))
 
   // Disable ETags — API responses change dynamically; 304s cause stale data
@@ -25,6 +27,9 @@ export function createApp() {
 
   // Rate limiting
   app.use(globalLimiter)
+
+  // API docs
+  app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openApiSpec))
 
   // API routes
   app.use('/api/v1', routes)
